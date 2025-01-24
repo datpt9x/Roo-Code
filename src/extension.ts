@@ -202,12 +202,29 @@ export function activate(context: vscode.ExtensionContext) {
 		)
 	}
 
-	// Register code action commands
-	registerCodeAction(context, "dmobin-assistant.explainCode", "EXPLAIN")
+	registerCodeAction(
+		context,
+		"dmobin-assistant.explainCode",
+		"EXPLAIN",
+		"What would you like Roo to explain?",
+		"E.g. How does the error handling work?",
+	)
 
-	registerCodeAction(context, "dmobin-assistant.fixCode", "FIX")
+	registerCodeAction(
+		context,
+		"dmobin-assistant.fixCode",
+		"FIX",
+		"What would you like Roo to fix?",
+		"E.g. Maintain backward compatibility",
+	)
 
-	registerCodeAction(context, "dmobin-assistant.improveCode", "IMPROVE")
+	registerCodeAction(
+		context,
+		"dmobin-assistant.improveCode",
+		"IMPROVE",
+		"What would you like Roo to improve?",
+		"E.g. Focus on performance optimization",
+	)
 
 	return createClineAPI(outputChannel, sidebarProvider)
 }

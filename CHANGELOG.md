@@ -1,5 +1,14 @@
 # Roo Code Changelog
 
+## [3.3.0]
+
+- Native VS Code code actions support with quick fixes and refactoring options
+- Modes can now request to switch to other modes when needed
+- Ask and Architect modes can now edit markdown files
+- Custom modes can now be restricted to specific file patterns (for example, a technical writer who can only edit markdown files 👋)
+- Support for configuring the Bedrock provider with AWS Profiles
+- New Roo Code community Discord at https://roocode.com/discord!
+
 ## [3.2.8]
 
 - Fixed bug opening custom modes settings JSON

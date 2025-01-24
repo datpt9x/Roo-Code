@@ -1022,6 +1022,8 @@ export class Cline {
 							return `[${block.name} for '${block.params.question}']`
 						case "attempt_completion":
 							return `[${block.name}]`
+						case "switch_mode":
+							return `[${block.name} to '${block.params.mode_slug}'${block.params.reason ? ` because: ${block.params.reason}` : ""}]`
 					}
 				}
 
@@ -1142,17 +1144,25 @@ export class Cline {
 					await this.browserSession.closeBrowser()
 				}
 
-				// Validate tool use before execution
-				const { mode } = (await this.providerRef.deref()?.getState()) ?? {}
-				const { customModes } = (await this.providerRef.deref()?.getState()) ?? {}
-				try {
-					validateToolUse(block.name as ToolName, mode ?? defaultModeSlug, customModes ?? [], {
-						apply_diff: this.diffEnabled,
-					})
-				} catch (error) {
-					this.consecutiveMistakeCount++
-					pushToolResult(formatResponse.toolError(error.message))
-					break
+				// Only validate complete tool uses
+				if (!block.partial) {
+					const { mode } = (await this.providerRef.deref()?.getState()) ?? {}
+					const { customModes } = (await this.providerRef.deref()?.getState()) ?? {}
+					try {
+						validateToolUse(
+							block.name as ToolName,
+							mode ?? defaultModeSlug,
+							customModes ?? [],
+							{
+								apply_diff: this.diffEnabled,
+							},
+							block.params,
+						)
+					} catch (error) {
+						this.consecutiveMistakeCount++
+						pushToolResult(formatResponse.toolError(error.message))
+						break
+					}
 				}
 
 				switch (block.name) {
@@ -2006,6 +2016,74 @@ export class Cline {
 							break
 						}
 					}
+					case "switch_mode": {
+						const mode_slug: string | undefined = block.params.mode_slug
+						const reason: string | undefined = block.params.reason
+						try {
+							if (block.partial) {
+								const partialMessage = JSON.stringify({
+									tool: "switchMode",
+									mode: removeClosingTag("mode_slug", mode_slug),
+									reason: removeClosingTag("reason", reason),
+								})
+								await this.ask("tool", partialMessage, block.partial).catch(() => {})
+								break
+							} else {
+								if (!mode_slug) {
+									this.consecutiveMistakeCount++
+									pushToolResult(await this.sayAndCreateMissingParamError("switch_mode", "mode_slug"))
+									break
+								}
+								this.consecutiveMistakeCount = 0
+
+								// Verify the mode exists
+								const targetMode = getModeBySlug(
+									mode_slug,
+									(await this.providerRef.deref()?.getState())?.customModes,
+								)
+								if (!targetMode) {
+									pushToolResult(formatResponse.toolError(`Invalid mode: ${mode_slug}`))
+									break
+								}
+
+								// Check if already in requested mode
+								const currentMode =
+									(await this.providerRef.deref()?.getState())?.mode ?? defaultModeSlug
+								if (currentMode === mode_slug) {
+									pushToolResult(`Already in ${targetMode.name} mode.`)
+									break
+								}
+
+								const completeMessage = JSON.stringify({
+									tool: "switchMode",
+									mode: mode_slug,
+									reason,
+								})
+
+								const didApprove = await askApproval("tool", completeMessage)
+								if (!didApprove) {
+									break
+								}
+
+								// Switch the mode
+								const provider = this.providerRef.deref()
+								if (provider) {
+									await provider.updateGlobalState("mode", mode_slug)
+									await provider.postStateToWebview()
+								}
+								pushToolResult(
+									`Successfully switched from ${getModeBySlug(currentMode)?.name ?? currentMode} mode to ${
+										targetMode.name
+									} mode${reason ? ` because: ${reason}` : ""}.`,
+								)
+								break
+							}
+						} catch (error) {
+							await handleError("switching mode", error)
+							break
+						}
+					}
+
 					case "attempt_completion": {
 						/*
 						this.consecutiveMistakeCount = 0
