@@ -7,10 +7,10 @@ export const ACTION_NAMES = {
 	IMPROVE: "Roo Code: Improve Code",
 } as const
 
-const COMMAND_IDS = {
-	EXPLAIN: "roo-cline.explainCode",
-	FIX: "roo-cline.fixCode",
-	IMPROVE: "roo-cline.improveCode",
+const COMMANDS = {
+	EXPLAIN: "dmobin-assistant.explainCode",
+	FIX: "dmobin-assistant.fixCode",
+	IMPROVE: "dmobin-assistant.improveCode",
 } as const
 
 interface DiagnosticData {
@@ -139,7 +139,7 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
 
 			// Create actions using helper method
 			actions.push(
-				this.createAction(ACTION_NAMES.EXPLAIN, vscode.CodeActionKind.QuickFix, COMMAND_IDS.EXPLAIN, [
+				this.createAction(ACTION_NAMES.EXPLAIN, vscode.CodeActionKind.QuickFix, COMMANDS.EXPLAIN, [
 					filePath,
 					effectiveRange.text,
 				]),
@@ -154,7 +154,7 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
 				if (relevantDiagnostics.length > 0) {
 					const diagnosticMessages = relevantDiagnostics.map(this.createDiagnosticData)
 					actions.push(
-						this.createAction(ACTION_NAMES.FIX, vscode.CodeActionKind.QuickFix, COMMAND_IDS.FIX, [
+						this.createAction(ACTION_NAMES.FIX, vscode.CodeActionKind.QuickFix, COMMANDS.FIX, [
 							filePath,
 							effectiveRange.text,
 							diagnosticMessages,
@@ -164,7 +164,7 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
 			}
 
 			actions.push(
-				this.createAction(ACTION_NAMES.IMPROVE, vscode.CodeActionKind.RefactorRewrite, COMMAND_IDS.IMPROVE, [
+				this.createAction(ACTION_NAMES.IMPROVE, vscode.CodeActionKind.RefactorRewrite, COMMANDS.IMPROVE, [
 					filePath,
 					effectiveRange.text,
 				]),

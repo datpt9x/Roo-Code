@@ -127,8 +127,8 @@ export const GlobalFileNames = {
 }
 
 export class ClineProvider implements vscode.WebviewViewProvider {
-	public static readonly sideBarId = "roo-cline.SidebarProvider" // used in package.json as the view's id. This value cannot be changed due to how vscode caches views based on their id, and updating the id would break existing instances of the extension.
-	public static readonly tabPanelId = "roo-cline.TabPanelProvider"
+	public static readonly sideBarId = "dmobin-assistant.SidebarProvider" // used in package.json as the view's id. This value cannot be changed due to how vscode caches views based on their id, and updating the id would break existing instances of the extension.
+	public static readonly tabPanelId = "dmobin-assistant.TabPanelProvider"
 	private static activeInstances: Set<ClineProvider> = new Set()
 	private disposables: vscode.Disposable[] = []
 	private view?: vscode.WebviewView | vscode.WebviewPanel
@@ -193,7 +193,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 
 		// If no visible provider, try to show the sidebar view
 		if (!visibleProvider) {
-			await vscode.commands.executeCommand("roo-cline.SidebarProvider.focus")
+			await vscode.commands.executeCommand("dmobin-assistant.SidebarProvider.focus")
 			// Wait briefly for the view to become visible
 			await delay(100)
 			visibleProvider = ClineProvider.getVisibleInstance()
@@ -676,7 +676,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						await this.context.globalState.update("allowedCommands", message.commands)
 						// Also update workspace settings
 						await vscode.workspace
-							.getConfiguration("roo-cline")
+							.getConfiguration("dmobin-assistant")
 							.update("allowedCommands", message.commands, vscode.ConfigurationTarget.Global)
 						break
 					case "openMcpSettings": {
@@ -1812,7 +1812,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			autoApprovalEnabled,
 		} = await this.getState()
 
-		const allowedCommands = vscode.workspace.getConfiguration("roo-cline").get<string[]>("allowedCommands") || []
+		const allowedCommands =
+			vscode.workspace.getConfiguration("dmobin-assistant").get<string[]>("allowedCommands") || []
 
 		return {
 			version: this.context.extension?.packageJSON?.version ?? "",
@@ -2117,23 +2118,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 					// Map VSCode locale to our supported languages
 					const langMap: { [key: string]: string } = {
 						en: "English",
-						ar: "Arabic",
-						"pt-br": "Brazilian Portuguese",
-						cs: "Czech",
-						fr: "French",
-						de: "German",
-						hi: "Hindi",
-						hu: "Hungarian",
-						it: "Italian",
-						ja: "Japanese",
-						ko: "Korean",
-						pl: "Polish",
-						pt: "Portuguese",
-						ru: "Russian",
-						"zh-cn": "Simplified Chinese",
-						es: "Spanish",
-						"zh-tw": "Traditional Chinese",
-						tr: "Turkish",
+						vi: "Vietnamese",
 					}
 					// Return mapped language or default to English
 					return langMap[vscodeLang.split("-")[0]] ?? "English"

@@ -1,9 +1,9 @@
 {
-	"name": "roo-cline",
-	"displayName": "Roo Code (prev. Roo Cline)",
+	"name": "dmobin-assistant",
+	"displayName": "Dmobin Assistant",
 	"description": "A VS Code plugin that enhances coding with AI-powered automation, multi-model support, and experimental features.",
-	"publisher": "RooVeterinaryInc",
-	"version": "3.2.8",
+	"publisher": "DmobinGlobal",
+	"version": "1.0.0",
 	"icon": "assets/icons/rocket.png",
 	"galleryBanner": {
 		"color": "#617A91",
@@ -13,13 +13,13 @@
 		"vscode": "^1.84.0"
 	},
 	"author": {
-		"name": "Roo Vet"
+		"name": "Dmobin Global"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/RooVetGit/Roo-Code"
+		"url": "https://github.com/DmobinGlobal/Dmobin-Assistant"
 	},
-	"homepage": "https://github.com/RooVetGit/Roo-Code",
+	"homepage": "https://github.com/DmobinGlobal/Dmobin-Assistant",
 	"categories": [
 		"AI",
 		"Chat",
@@ -51,128 +51,128 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "roo-cline-ActivityBar",
-					"title": "Roo Code",
+					"id": "dmobin-assistant-ActivityBar",
+					"title": "Dmobin Assistant",
 					"icon": "$(rocket)"
 				}
 			]
 		},
 		"views": {
-			"roo-cline-ActivityBar": [
+			"dmobin-assistant-ActivityBar": [
 				{
 					"type": "webview",
-					"id": "roo-cline.SidebarProvider",
+					"id": "dmobin-assistant.SidebarProvider",
 					"name": ""
 				}
 			]
 		},
 		"commands": [
 			{
-				"command": "roo-cline.plusButtonClicked",
+				"command": "dmobin-assistant.plusButtonClicked",
 				"title": "New Task",
 				"icon": "$(add)"
 			},
 			{
-				"command": "roo-cline.mcpButtonClicked",
+				"command": "dmobin-assistant.mcpButtonClicked",
 				"title": "MCP Servers",
 				"icon": "$(server)"
 			},
 			{
-				"command": "roo-cline.promptsButtonClicked",
+				"command": "dmobin-assistant.promptsButtonClicked",
 				"title": "Prompts",
 				"icon": "$(notebook)"
 			},
 			{
-				"command": "roo-cline.historyButtonClicked",
+				"command": "dmobin-assistant.historyButtonClicked",
 				"title": "History",
 				"icon": "$(history)"
 			},
 			{
-				"command": "roo-cline.popoutButtonClicked",
+				"command": "dmobin-assistant.popoutButtonClicked",
 				"title": "Open in Editor",
 				"icon": "$(link-external)"
 			},
 			{
-				"command": "roo-cline.settingsButtonClicked",
+				"command": "dmobin-assistant.settingsButtonClicked",
 				"title": "Settings",
 				"icon": "$(settings-gear)"
 			},
 			{
-				"command": "roo-cline.openInNewTab",
+				"command": "dmobin-assistant.openInNewTab",
 				"title": "Open In New Tab",
-				"category": "Roo Code"
+				"category": "Dmobin Assistant"
 			},
 			{
-				"command": "roo-cline.explainCode",
-				"title": "Roo Code: Explain Code",
-				"category": "Roo Code"
+				"command": "dmobin-assistant.explainCode",
+				"title": "Dmobin Assistant: Explain Code",
+				"category": "Dmobin Assistant"
 			},
 			{
-				"command": "roo-cline.fixCode",
-				"title": "Roo Code: Fix Code",
-				"category": "Roo Code"
+				"command": "dmobin-assistant.fixCode",
+				"title": "Dmobin Assistant: Fix Code",
+				"category": "Dmobin Assistant"
 			},
 			{
-				"command": "roo-cline.improveCode",
-				"title": "Roo Code: Improve Code",
-				"category": "Roo Code"
+				"command": "dmobin-assistant.improveCode",
+				"title": "Dmobin Assistant: Improve Code",
+				"category": "Dmobin Assistant"
 			}
 		],
 		"menus": {
 			"editor/context": [
 				{
-					"command": "roo-cline.explainCode",
+					"command": "dmobin-assistant.explainCode",
 					"when": "editorHasSelection",
-					"group": "Roo Code@1"
+					"group": "Dmobin Assistant@1"
 				},
 				{
-					"command": "roo-cline.fixCode",
+					"command": "dmobin-assistant.fixCode",
 					"when": "editorHasSelection",
-					"group": "Roo Code@2"
+					"group": "Dmobin Assistant@2"
 				},
 				{
-					"command": "roo-cline.improveCode",
+					"command": "dmobin-assistant.improveCode",
 					"when": "editorHasSelection",
-					"group": "Roo Code@3"
+					"group": "Dmobin Assistant@3"
 				}
 			],
 			"view/title": [
 				{
-					"command": "roo-cline.plusButtonClicked",
+					"command": "dmobin-assistant.plusButtonClicked",
 					"group": "navigation@1",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == dmobin-assistant.SidebarProvider"
 				},
 				{
-					"command": "roo-cline.promptsButtonClicked",
+					"command": "dmobin-assistant.promptsButtonClicked",
 					"group": "navigation@2",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == dmobin-assistant.SidebarProvider"
 				},
 				{
-					"command": "roo-cline.mcpButtonClicked",
+					"command": "dmobin-assistant.mcpButtonClicked",
 					"group": "navigation@3",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == dmobin-assistant.SidebarProvider"
 				},
 				{
-					"command": "roo-cline.historyButtonClicked",
+					"command": "dmobin-assistant.historyButtonClicked",
 					"group": "navigation@4",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == dmobin-assistant.SidebarProvider"
 				},
 				{
-					"command": "roo-cline.popoutButtonClicked",
+					"command": "dmobin-assistant.popoutButtonClicked",
 					"group": "navigation@5",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == dmobin-assistant.SidebarProvider"
 				},
 				{
-					"command": "roo-cline.settingsButtonClicked",
+					"command": "dmobin-assistant.settingsButtonClicked",
 					"group": "navigation@6",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == dmobin-assistant.SidebarProvider"
 				}
 			]
 		},
 		"configuration": {
-			"title": "Roo Code",
+			"title": "Dmobin Assistant",
 			"properties": {
-				"roo-cline.allowedCommands": {
+				"dmobin-assistant.allowedCommands": {
 					"type": "array",
 					"items": {
 						"type": "string"
@@ -187,7 +187,7 @@
 					],
 					"description": "Commands that can be auto-executed when 'Always approve execute operations' is enabled"
 				},
-				"roo-cline.vsCodeLmModelSelector": {
+				"dmobin-assistant.vsCodeLmModelSelector": {
 					"type": "object",
 					"properties": {
 						"vendor": {
@@ -205,7 +205,7 @@
 		}
 	},
 	"scripts": {
-		"build": "npm run build:webview && npm run vsix",
+		"build": "npm run build:webview && powershell -Command \"New-Item -ItemType Directory -Force -Path bin; npx vsce package --out bin\"",
 		"build:webview": "cd webview-ui && npm run build",
 		"changeset": "changeset",
 		"check-types": "tsc --noEmit",
@@ -224,7 +224,7 @@
 		"publish": "npm run build && changeset publish && npm install --package-lock-only",
 		"version-packages": "changeset version && npm install --package-lock-only",
 		"vscode:prepublish": "npm run package",
-		"vsix": "mkdir -p bin && npx vsce package --out bin",
+		"vsix": "powershell -Command \"New-Item -ItemType Directory -Force -Path bin; npx vsce package --out bin\"",
 		"watch": "npm-run-all -p watch:*",
 		"watch:esbuild": "node esbuild.js --watch",
 		"watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
