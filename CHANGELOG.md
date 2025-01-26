@@ -1,5 +1,18 @@
 # Roo Code Changelog
 
+## [3.3.2]
+
+- Add a dropdown to select the API configuration for a mode in the Prompts tab
+- Fix bug where always allow wasn't showing up for MCP tools
+- Improve OpenRouter DeepSeek-R1 integration by setting temperature to the recommended 0.6 and displaying the reasoning output (thanks @Szpadel - it's really fascinating to watch!)
+- Allow specifying a custom OpenRouter base URL (thanks @dairui1!)
+- Make the UI for nested settings nicer (thanks @PretzelVector!)
+
+## [3.3.1]
+
+- Fix issue where the terminal management system was creating unnecessary new terminals (thanks @evan-fannin!)
+- Fix bug where the saved API provider for a mode wasn't being selected after a mode switch command
+
 ## [3.3.0]
 
 - Native VS Code code actions support with quick fixes and refactoring options

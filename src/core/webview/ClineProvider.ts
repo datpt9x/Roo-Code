@@ -93,6 +93,7 @@ type GlobalStateKey =
 	| "openAiStreamingEnabled"
 	| "openRouterModelId"
 	| "openRouterModelInfo"
+	| "openRouterBaseUrl"
 	| "openRouterUseMiddleOutTransform"
 	| "allowedCommands"
 	| "soundEnabled"
@@ -781,38 +782,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						await this.postStateToWebview()
 						break
 					case "mode":
-						const newMode = message.text as Mode
-						await this.updateGlobalState("mode", newMode)
-
-						// Load the saved API config for the new mode if it exists
-						const savedConfigId = await this.configManager.getModeConfigId(newMode)
-						const listApiConfig = await this.configManager.listConfig()
-
-						// Update listApiConfigMeta first to ensure UI has latest data
-						await this.updateGlobalState("listApiConfigMeta", listApiConfig)
-
-						// If this mode has a saved config, use it
-						if (savedConfigId) {
-							const config = listApiConfig?.find((c) => c.id === savedConfigId)
-							if (config?.name) {
-								const apiConfig = await this.configManager.loadConfig(config.name)
-								await Promise.all([
-									this.updateGlobalState("currentApiConfigName", config.name),
-									this.updateApiConfiguration(apiConfig),
-								])
-							}
-						} else {
-							// If no saved config for this mode, save current config as default
-							const currentApiConfigName = await this.getGlobalState("currentApiConfigName")
-							if (currentApiConfigName) {
-								const config = listApiConfig?.find((c) => c.name === currentApiConfigName)
-								if (config?.id) {
-									await this.configManager.setModeConfig(newMode, config.id)
-								}
-							}
-						}
-
-						await this.postStateToWebview()
+						await this.handleModeSwitch(message.text as Mode)
 						break
 					case "updateSupportPrompt":
 						try {
@@ -1241,6 +1211,44 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		)
 	}
 
+	/**
+	 * Handle switching to a new mode, including updating the associated API configuration
+	 * @param newMode The mode to switch to
+	 */
+	public async handleModeSwitch(newMode: Mode) {
+		await this.updateGlobalState("mode", newMode)
+
+		// Load the saved API config for the new mode if it exists
+		const savedConfigId = await this.configManager.getModeConfigId(newMode)
+		const listApiConfig = await this.configManager.listConfig()
+
+		// Update listApiConfigMeta first to ensure UI has latest data
+		await this.updateGlobalState("listApiConfigMeta", listApiConfig)
+
+		// If this mode has a saved config, use it
+		if (savedConfigId) {
+			const config = listApiConfig?.find((c) => c.id === savedConfigId)
+			if (config?.name) {
+				const apiConfig = await this.configManager.loadConfig(config.name)
+				await Promise.all([
+					this.updateGlobalState("currentApiConfigName", config.name),
+					this.updateApiConfiguration(apiConfig),
+				])
+			}
+		} else {
+			// If no saved config for this mode, save current config as default
+			const currentApiConfigName = await this.getGlobalState("currentApiConfigName")
+			if (currentApiConfigName) {
+				const config = listApiConfig?.find((c) => c.name === currentApiConfigName)
+				if (config?.id) {
+					await this.configManager.setModeConfig(newMode, config.id)
+				}
+			}
+		}
+
+		await this.postStateToWebview()
+	}
+
 	private async updateApiConfiguration(apiConfiguration: ApiConfiguration) {
 		// Update mode's default config
 		const { mode } = await this.getState()
@@ -1286,6 +1294,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			azureApiVersion,
 			openAiStreamingEnabled,
 			openRouterModelId,
+			openRouterBaseUrl,
 			openRouterModelInfo,
 			openRouterUseMiddleOutTransform,
 			vsCodeLmModelSelector,
@@ -1324,6 +1333,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		await this.updateGlobalState("openAiStreamingEnabled", openAiStreamingEnabled)
 		await this.updateGlobalState("openRouterModelId", openRouterModelId)
 		await this.updateGlobalState("openRouterModelInfo", openRouterModelInfo)
+		await this.updateGlobalState("openRouterBaseUrl", openRouterBaseUrl)
 		await this.updateGlobalState("openRouterUseMiddleOutTransform", openRouterUseMiddleOutTransform)
 		await this.updateGlobalState("vsCodeLmModelSelector", vsCodeLmModelSelector)
 		await this.storeSecret("mistralApiKey", mistralApiKey)
@@ -1948,6 +1958,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			openAiStreamingEnabled,
 			openRouterModelId,
 			openRouterModelInfo,
+			openRouterBaseUrl,
 			openRouterUseMiddleOutTransform,
 			lastShownAnnouncementId,
 			customInstructions,
@@ -2016,6 +2027,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.getGlobalState("openAiStreamingEnabled") as Promise<boolean | undefined>,
 			this.getGlobalState("openRouterModelId") as Promise<string | undefined>,
 			this.getGlobalState("openRouterModelInfo") as Promise<ModelInfo | undefined>,
+			this.getGlobalState("openRouterBaseUrl") as Promise<string | undefined>,
 			this.getGlobalState("openRouterUseMiddleOutTransform") as Promise<boolean | undefined>,
 			this.getGlobalState("lastShownAnnouncementId") as Promise<string | undefined>,
 			this.getGlobalState("customInstructions") as Promise<string | undefined>,
@@ -2101,6 +2113,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				openAiStreamingEnabled,
 				openRouterModelId,
 				openRouterModelInfo,
+				openRouterBaseUrl,
 				openRouterUseMiddleOutTransform,
 				vsCodeLmModelSelector,
 			},
