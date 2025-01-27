@@ -28,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 	outputChannel.appendLine("Roo-Code extension activated")
 
 	// Get default commands from configuration
-	const defaultCommands = vscode.workspace.getConfiguration("dmobin-assistant").get<string[]>("allowedCommands") || []
+	const defaultCommands = vscode.workspace.getConfiguration("roo-cline").get<string[]>("allowedCommands") || []
 
 	// Initialize global state if not already set
 	if (!context.globalState.get("allowedCommands")) {
@@ -44,7 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
 	)
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("dmobin-assistant.plusButtonClicked", async () => {
+		vscode.commands.registerCommand("roo-cline.plusButtonClicked", async () => {
 			outputChannel.appendLine("Plus button Clicked")
 			await sidebarProvider.clearTask()
 			await sidebarProvider.postStateToWebview()
@@ -53,13 +53,13 @@ export function activate(context: vscode.ExtensionContext) {
 	)
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("dmobin-assistant.mcpButtonClicked", () => {
+		vscode.commands.registerCommand("roo-cline.mcpButtonClicked", () => {
 			sidebarProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
 		}),
 	)
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("dmobin-assistant.promptsButtonClicked", () => {
+		vscode.commands.registerCommand("roo-cline.promptsButtonClicked", () => {
 			sidebarProvider.postMessageToWebview({ type: "action", action: "promptsButtonClicked" })
 		}),
 	)
@@ -97,20 +97,18 @@ export function activate(context: vscode.ExtensionContext) {
 		await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
 	}
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand("dmobin-assistant.popoutButtonClicked", openClineInNewTab),
-	)
-	context.subscriptions.push(vscode.commands.registerCommand("dmobin-assistant.openInNewTab", openClineInNewTab))
+	context.subscriptions.push(vscode.commands.registerCommand("roo-cline.popoutButtonClicked", openClineInNewTab))
+	context.subscriptions.push(vscode.commands.registerCommand("roo-cline.openInNewTab", openClineInNewTab))
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("dmobin-assistant.settingsButtonClicked", () => {
+		vscode.commands.registerCommand("roo-cline.settingsButtonClicked", () => {
 			//vscode.window.showInformationMessage(message)
 			sidebarProvider.postMessageToWebview({ type: "action", action: "settingsButtonClicked" })
 		}),
 	)
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("dmobin-assistant.historyButtonClicked", () => {
+		vscode.commands.registerCommand("roo-cline.historyButtonClicked", () => {
 			sidebarProvider.postMessageToWebview({ type: "action", action: "historyButtonClicked" })
 		}),
 	)
@@ -173,6 +171,7 @@ export function activate(context: vscode.ExtensionContext) {
 		context: vscode.ExtensionContext,
 		command: string,
 		promptType: keyof typeof ACTION_NAMES,
+		inNewTask: boolean,
 		inputPrompt?: string,
 		inputPlaceholder?: string,
 	) => {
@@ -196,31 +195,47 @@ export function activate(context: vscode.ExtensionContext) {
 						...(userInput ? { userInput } : {}),
 					}
 
-					await ClineProvider.handleCodeAction(promptType, params)
+					await ClineProvider.handleCodeAction(command, promptType, params)
 				},
 			),
 		)
 	}
 
-	registerCodeAction(
+	// Helper function to register both versions of a code action
+	const registerCodeActionPair = (
+		context: vscode.ExtensionContext,
+		baseCommand: string,
+		promptType: keyof typeof ACTION_NAMES,
+		inputPrompt?: string,
+		inputPlaceholder?: string,
+	) => {
+		// Register new task version
+		registerCodeAction(context, baseCommand, promptType, true, inputPrompt, inputPlaceholder)
+
+		// Register current task version
+		registerCodeAction(context, `${baseCommand}InCurrentTask`, promptType, false, inputPrompt, inputPlaceholder)
+	}
+
+	// Register code action commands
+	registerCodeActionPair(
 		context,
-		"dmobin-assistant.explainCode",
+		"roo-cline.explainCode",
 		"EXPLAIN",
 		"What would you like Roo to explain?",
 		"E.g. How does the error handling work?",
 	)
 
-	registerCodeAction(
+	registerCodeActionPair(
 		context,
-		"dmobin-assistant.fixCode",
+		"roo-cline.fixCode",
 		"FIX",
 		"What would you like Roo to fix?",
 		"E.g. Maintain backward compatibility",
 	)
 
-	registerCodeAction(
+	registerCodeActionPair(
 		context,
-		"dmobin-assistant.improveCode",
+		"roo-cline.improveCode",
 		"IMPROVE",
 		"What would you like Roo to improve?",
 		"E.g. Focus on performance optimization",

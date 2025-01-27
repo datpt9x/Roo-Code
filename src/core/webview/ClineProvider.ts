@@ -188,10 +188,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		return findLast(Array.from(this.activeInstances), (instance) => instance.view?.visible === true)
 	}
 
-	public static async handleCodeAction(
-		promptType: keyof typeof ACTION_NAMES,
-		params: Record<string, string | any[]>,
-	): Promise<void> {
+	public static async getInstance(): Promise<ClineProvider | undefined> {
 		let visibleProvider = ClineProvider.getVisibleInstance()
 
 		// If no visible provider, try to show the sidebar view
@@ -207,9 +204,45 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			return
 		}
 
+		return visibleProvider
+	}
+
+	public static async isActiveTask(): Promise<boolean> {
+		const visibleProvider = await ClineProvider.getInstance()
+		if (!visibleProvider) {
+			return false
+		}
+
+		if (visibleProvider.cline) {
+			return true
+		}
+
+		return false
+	}
+
+	public static async handleCodeAction(
+		command: string,
+		promptType: keyof typeof ACTION_NAMES,
+		params: Record<string, string | any[]>,
+	): Promise<void> {
+		const visibleProvider = await ClineProvider.getInstance()
+		if (!visibleProvider) {
+			return
+		}
+
 		const { customSupportPrompts } = await visibleProvider.getState()
 
 		const prompt = supportPrompt.create(promptType, params, customSupportPrompts)
+
+		if (visibleProvider.cline && command.endsWith("InCurrentTask")) {
+			await visibleProvider.postMessageToWebview({
+				type: "invoke",
+				invoke: "sendMessage",
+				text: prompt,
+			})
+
+			return
+		}
 
 		await visibleProvider.initClineWithTask(prompt)
 	}
@@ -1176,6 +1209,16 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 							await this.cline.updateDiffStrategy(message.bool ?? false)
 						}
 						await this.postStateToWebview()
+						break
+					case "updateMcpTimeout":
+						if (message.serverName && typeof message.timeout === "number") {
+							try {
+								await this.mcpHub?.updateServerTimeout(message.serverName, message.timeout)
+							} catch (error) {
+								console.error(`Failed to update timeout for ${message.serverName}:`, error)
+								vscode.window.showErrorMessage(`Failed to update server timeout`)
+							}
+						}
 						break
 					case "updateCustomMode":
 						if (message.modeConfig) {
