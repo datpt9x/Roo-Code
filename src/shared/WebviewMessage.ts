@@ -7,6 +7,9 @@ export type AudioType = "notification" | "celebration" | "progress_loop"
 
 export interface WebviewMessage {
 	type:
+		| "login"
+		| "logout"
+		| "sendMessage"
 		| "apiConfiguration"
 		| "currentApiConfigName"
 		| "upsertApiConfiguration"
@@ -104,6 +107,8 @@ export interface WebviewMessage {
 	slug?: string
 	modeConfig?: ModeConfig
 	timeout?: number
+	username?: string
+	password?: string
 }
 
 export type ClineAskResponse = "yesButtonClicked" | "noButtonClicked" | "messageResponse"

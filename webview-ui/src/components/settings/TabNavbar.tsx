@@ -18,6 +18,8 @@ type TooltipProps = {
 	align?: "left" | "center" | "right"
 }
 
+const Icon = ({ name }: { name: string }) => <span className={`codicon codicon-${name}`}></span>
+
 const Tooltip: React.FC<TooltipProps> = ({ text, isVisible, position, align = "center" }) => {
 	let leftPosition = position.x
 	let triangleStyle: React.CSSProperties = {
@@ -138,7 +140,7 @@ const TabNavbar = ({ onPlusClick, onHistoryClick, onSettingsClick }: TabNavbarPr
 					onMouseEnter={(e) => showTooltip("New Chat", e, "center")}
 					onMouseLeave={hideTooltip}
 					onMouseMove={(e) => showTooltip("New Chat", e, "center")}>
-					<span className="codicon codicon-add"></span>
+					<Icon name="add" />
 				</VSCodeButton>
 				<VSCodeButton
 					appearance="icon"
@@ -147,7 +149,7 @@ const TabNavbar = ({ onPlusClick, onHistoryClick, onSettingsClick }: TabNavbarPr
 					onMouseEnter={(e) => showTooltip("History", e, "center")}
 					onMouseLeave={hideTooltip}
 					onMouseMove={(e) => showTooltip("History", e, "center")}>
-					<span className="codicon codicon-history"></span>
+					<Icon name="history" />
 				</VSCodeButton>
 				<VSCodeButton
 					appearance="icon"
@@ -156,7 +158,7 @@ const TabNavbar = ({ onPlusClick, onHistoryClick, onSettingsClick }: TabNavbarPr
 					onMouseEnter={(e) => showTooltip("Settings", e, "right")}
 					onMouseLeave={hideTooltip}
 					onMouseMove={(e) => showTooltip("Settings", e, "right")}>
-					<span className="codicon codicon-settings-gear"></span>
+					<Icon name="settings-gear" />
 				</VSCodeButton>
 			</div>
 			<Tooltip {...tooltip} />

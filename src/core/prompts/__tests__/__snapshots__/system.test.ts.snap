@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SYSTEM_PROMPT should exclude diff strategy tool description when diffEnabled is false 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are Dmobin Assistant, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -324,7 +324,7 @@ Mock generic rules"
 `;
 
 exports[`SYSTEM_PROMPT should exclude diff strategy tool description when diffEnabled is undefined 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are Dmobin Assistant, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -646,8 +646,8 @@ Mock mode-specific rules
 Mock generic rules"
 `;
 
-exports[`SYSTEM_PROMPT should explicitly handle undefined mcpHub 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+exports[`SYSTEM_PROMPT should exclude diff strategy tool description when diffEnabled is undefined 1`] = `
+"You are Dmobin Assistant, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 

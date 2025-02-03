@@ -18,6 +18,9 @@ export interface LanguageModelChatSelector {
 // webview will hold state
 export interface ExtensionMessage {
 	type:
+		| "login"
+		| "logout"
+		| "apiConfiguration"
 		| "action"
 		| "state"
 		| "selectedImages"
@@ -43,6 +46,8 @@ export interface ExtensionMessage {
 		| "updateCustomMode"
 		| "deleteCustomMode"
 	text?: string
+	username?: string
+	password?: string
 	action?:
 		| "chatButtonClicked"
 		| "mcpButtonClicked"

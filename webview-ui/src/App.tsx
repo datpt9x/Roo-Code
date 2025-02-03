@@ -1,110 +1,46 @@
-import { useCallback, useEffect, useState } from "react"
-import { useEvent } from "react-use"
-import { ExtensionMessage } from "../../src/shared/ExtensionMessage"
-import ChatView from "./components/chat/ChatView"
-import HistoryView from "./components/history/HistoryView"
-import SettingsView from "./components/settings/SettingsView"
-import WelcomeView from "./components/welcome/WelcomeView"
+import React, { useEffect } from "react"
 import { ExtensionStateContextProvider, useExtensionState } from "./context/ExtensionStateContext"
+import { AuthProvider, useAuth } from "./context/AuthContext"
+import LoginView from "./components/login/LoginView"
+import MainContent from "./components/MainContent"
 import { vscode } from "./utils/vscode"
-import McpView from "./components/mcp/McpView"
-import PromptsView from "./components/prompts/PromptsView"
 
-const AppContent = () => {
-	const { didHydrateState, showWelcome, shouldShowAnnouncement } = useExtensionState()
-	const [showSettings, setShowSettings] = useState(false)
-	const [showHistory, setShowHistory] = useState(false)
-	const [showMcp, setShowMcp] = useState(false)
-	const [showPrompts, setShowPrompts] = useState(false)
-	const [showAnnouncement, setShowAnnouncement] = useState(false)
-
-	const handleMessage = useCallback((e: MessageEvent) => {
-		const message: ExtensionMessage = e.data
-		switch (message.type) {
-			case "action":
-				switch (message.action!) {
-					case "settingsButtonClicked":
-						setShowSettings(true)
-						setShowHistory(false)
-						setShowMcp(false)
-						setShowPrompts(false)
-						break
-					case "historyButtonClicked":
-						setShowSettings(false)
-						setShowHistory(true)
-						setShowMcp(false)
-						setShowPrompts(false)
-						break
-					case "mcpButtonClicked":
-						setShowSettings(false)
-						setShowHistory(false)
-						setShowMcp(true)
-						setShowPrompts(false)
-						break
-					case "promptsButtonClicked":
-						setShowSettings(false)
-						setShowHistory(false)
-						setShowMcp(false)
-						setShowPrompts(true)
-						break
-					case "chatButtonClicked":
-						setShowSettings(false)
-						setShowHistory(false)
-						setShowMcp(false)
-						setShowPrompts(false)
-						break
-				}
-				break
-		}
-	}, [])
-
-	useEvent("message", handleMessage)
+const AppContent: React.FC = () => {
+	const { isAuthenticated, login } = useAuth()
+	const { setPreferredLanguage } = useExtensionState()
 
 	useEffect(() => {
-		if (shouldShowAnnouncement) {
-			setShowAnnouncement(true)
-			vscode.postMessage({ type: "didShowAnnouncement" })
-		}
-	}, [shouldShowAnnouncement])
+		const handleMessage = (event: MessageEvent) => {
+			const message = event.data
 
-	if (!didHydrateState) {
-		return null
+			if (message.type === "loginSuccess") {
+				// Xử lý đăng nhập thành công
+				const { token, user } = message
+				login(token, user)
+			}
+		}
+
+		window.addEventListener("message", handleMessage)
+		return () => window.removeEventListener("message", handleMessage)
+	}, [login])
+
+	if (!isAuthenticated) {
+		return <LoginView />
 	}
 
 	return (
-		<>
-			{showWelcome ? (
-				<WelcomeView />
-			) : (
-				<>
-					{showSettings && <SettingsView onDone={() => setShowSettings(false)} />}
-					{showHistory && <HistoryView onDone={() => setShowHistory(false)} />}
-					{showMcp && <McpView onDone={() => setShowMcp(false)} />}
-					{showPrompts && <PromptsView onDone={() => setShowPrompts(false)} />}
-					{/* Do not conditionally load ChatView, it's expensive and there's state we don't want to lose (user input, disableInput, askResponse promise, etc.) */}
-					<ChatView
-						showHistoryView={() => {
-							setShowSettings(false)
-							setShowMcp(false)
-							setShowPrompts(false)
-							setShowHistory(true)
-						}}
-						isHidden={showSettings || showHistory || showMcp || showPrompts}
-						showAnnouncement={showAnnouncement}
-						hideAnnouncement={() => {
-							setShowAnnouncement(false)
-						}}
-					/>
-				</>
-			)}
-		</>
+		<div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+			<MainContent />
+		</div>
 	)
 }
 
-const App = () => {
+const App: React.FC = () => {
 	return (
 		<ExtensionStateContextProvider>
-			<AppContent />
+			<AuthProvider>
+				<AppContent />
+			</AuthProvider>
 		</ExtensionStateContextProvider>
 	)
 }

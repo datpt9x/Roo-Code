@@ -1,6 +1,6 @@
-# Roo Code (prev. Roo Cline)
+# Dmobin Assistant
 
-<table>
+<!-- <table>
 <tbody>
 <td align="center">
 <a href="https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline" target="_blank"><strong>Download on VS Marketplace</strong></a>
@@ -18,9 +18,9 @@
 <a href="https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline&ssr=false#review-details" target="_blank"><strong>Rate & Review</strong></a>
 </td>
 </tbody>
-</table>
+</table> -->
 
-**Roo Code** is an AI-powered **autonomous coding agent** that lives in your editor. It can:
+**Dmobin Assistant** is an AI-powered **autonomous coding agent** that lives in your editor. It can:
 
 - Communicate in natural language
 - Read and write files directly in your workspace
@@ -31,17 +31,17 @@
 
 Whether you’re seeking a flexible coding partner, a system architect, or specialized roles like a QA engineer or product manager, Roo Code can help you build software more efficiently.
 
-Check out the [CHANGELOG](CHANGELOG.md) for detailed updates and fixes.
+<!-- Check out the [CHANGELOG](CHANGELOG.md) for detailed updates and fixes. -->
 
 ---
 
 ## New in 3.3: Code Actions, More Powerful Modes, and a new Discord! 🚀
 
-This release brings significant improvements to how you interact with Roo Code:
+This release brings significant improvements to how you interact with Dmobin Assistant:
 
 ### Code Actions
 
-Roo Code now integrates directly with VS Code's native code actions system, providing quick fixes and refactoring options right in your editor. Look for the lightbulb 💡 to access Roo Code's capabilities without switching context.
+Dmobin Assistant now integrates directly with VS Code's native code actions system, providing quick fixes and refactoring options right in your editor. Look for the lightbulb 💡 to access Dmobin Assistant's capabilities without switching context.
 
 ### Enhanced Mode Capabilities
 
@@ -49,18 +49,18 @@ Roo Code now integrates directly with VS Code's native code actions system, prov
 - **Custom File Restrictions**: In general, custom modes can now be restricted to specific file patterns (for example, a technical writer who can only edit markdown files 👋). There's no UI for this yet, but who needs that when you can just ask Roo to set it up for you?
 - **Self-Initiated Mode Switching**: Modes can intelligently request to switch between each other based on the task at hand. For instance, Code mode might request to switch to Test Engineer mode once it's ready to write tests.
 
-### Join Our Discord!
+<!-- ### Join Our Discord!
 
-We've launched a new Discord community! Join us at [https://roocode.com/discord](https://roocode.com/discord) to:
+We've launched a new Discord community! Join us at [https://roocode.com/discord](https://roocode.com/discord) to: -->
 
 - Share your custom modes
 - Get help and support
 - Connect with other Roo Code users
 - Stay updated on the latest features
 
-## New in 3.2: Introducing Custom Modes, plus rebranding from Roo Cline → Roo Code! 🚀
+<!-- ## New in 3.2: Introducing Custom Modes, plus rebranding from Roo Cline → Roo Code! 🚀   -->
 
-### Introducing Roo Code
+### Introducing Dmobin Assistant
 
 Our biggest update yet is here - we're officially changing our name from Roo Cline to Roo Code! After growing beyond 50,000 installations across VS Marketplace and Open VSX, we're ready to chart our own course. Our heartfelt thanks to everyone in the Cline community who helped us reach this milestone.
 

@@ -361,7 +361,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								marginTop: "5px",
 								color: "var(--vscode-descriptionForeground)",
 							}}>
-							Select the language that Cline should use for communication.
+							Select the language that Dmobin Assistant should use for communication.
 						</p>
 					</div>
 
@@ -450,7 +450,8 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							color: "var(--vscode-descriptionForeground)",
 							marginBottom: "12px",
 						}}>
-						Hit the + to create a new custom mode, or just ask Roo in chat to create one for you!
+						Hit the + to create a new custom mode, or just ask Dmobin Assistant in chat to create one for
+						you!
 					</div>
 
 					<div
@@ -559,8 +560,8 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								color: "var(--vscode-descriptionForeground)",
 								marginBottom: "8px",
 							}}>
-							Define Roo's expertise and personality for this mode. This description shapes how Roo
-							presents itself and approaches tasks.
+							Define Dmobin Assistant's expertise and personality for this mode. This description shapes
+							how Dmobin Assistant presents itself and approaches tasks.
 						</div>
 						<VSCodeTextArea
 							value={(() => {
@@ -1078,7 +1079,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 										color: "var(--vscode-descriptionForeground)",
 										marginBottom: "8px",
 									}}>
-									Define Roo's expertise and personality for this mode.
+									Define Dmobin Assistant's expertise and personality for this mode.
 								</div>
 								<VSCodeTextArea
 									value={newModeRoleDefinition}

@@ -1,6 +1,7 @@
 import { VSCodeButton, VSCodeCheckbox, VSCodeLink, VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
 import { memo, useEffect, useState } from "react"
 import { useExtensionState } from "../../context/ExtensionStateContext"
+import { useAuth } from "../../context/AuthContext"
 import { validateApiConfiguration, validateModelId } from "../../utils/validate"
 import { vscode } from "../../utils/vscode"
 import ApiOptions from "./ApiOptions"
@@ -9,12 +10,14 @@ import { EXPERIMENT_IDS, experimentConfigsMap } from "../../../../src/shared/exp
 import ApiConfigManager from "./ApiConfigManager"
 import { Dropdown } from "vscrui"
 import type { DropdownOption } from "vscrui"
+import OpenRouterModelPicker from "./OpenRouterModelPicker"
 
 type SettingsViewProps = {
 	onDone: () => void
 }
 
 const SettingsView = ({ onDone }: SettingsViewProps) => {
+	const { user, logout } = useAuth()
 	const {
 		apiConfiguration,
 		version,
@@ -37,7 +40,6 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 		browserViewportSize,
 		setBrowserViewportSize,
 		openRouterModels,
-		glamaModels,
 		setAllowedCommands,
 		allowedCommands,
 		fuzzyMatchThreshold,
@@ -66,16 +68,34 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 	const [modelIdErrorMessage, setModelIdErrorMessage] = useState<string | undefined>(undefined)
 	const [commandInput, setCommandInput] = useState("")
 
+	// Set default OpenRouter API key
+	useEffect(() => {
+		if (!apiConfiguration?.openRouterApiKey) {
+			vscode.postMessage({
+				type: "apiConfiguration",
+				apiConfiguration: {
+					...apiConfiguration,
+					apiProvider: "openrouter",
+					openRouterApiKey: "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",
+				},
+			})
+		}
+	}, [])
+
 	const handleSubmit = () => {
 		const apiValidationResult = validateApiConfiguration(apiConfiguration)
-		const modelIdValidationResult = validateModelId(apiConfiguration, glamaModels, openRouterModels)
+		const modelIdValidationResult = validateModelId(apiConfiguration, {}, openRouterModels)
 
 		setApiErrorMessage(apiValidationResult)
 		setModelIdErrorMessage(modelIdValidationResult)
 		if (!apiValidationResult && !modelIdValidationResult) {
 			vscode.postMessage({
 				type: "apiConfiguration",
-				apiConfiguration,
+				apiConfiguration: {
+					...apiConfiguration,
+					apiProvider: "openrouter",
+					openRouterApiKey: "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",
+				},
 			})
 			vscode.postMessage({ type: "alwaysAllowReadOnly", bool: alwaysAllowReadOnly })
 			vscode.postMessage({ type: "alwaysAllowWrite", bool: alwaysAllowWrite })
@@ -99,7 +119,11 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 			vscode.postMessage({
 				type: "upsertApiConfiguration",
 				text: currentApiConfigName,
-				apiConfiguration,
+				apiConfiguration: {
+					...apiConfiguration,
+					apiProvider: "openrouter",
+					openRouterApiKey: "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",
+				},
 			})
 
 			vscode.postMessage({
@@ -120,10 +144,10 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 	// Initial validation on mount
 	useEffect(() => {
 		const apiValidationResult = validateApiConfiguration(apiConfiguration)
-		const modelIdValidationResult = validateModelId(apiConfiguration, glamaModels, openRouterModels)
+		const modelIdValidationResult = validateModelId(apiConfiguration, {}, openRouterModels)
 		setApiErrorMessage(apiValidationResult)
 		setModelIdErrorMessage(modelIdValidationResult)
-	}, [apiConfiguration, glamaModels, openRouterModels])
+	}, [apiConfiguration, openRouterModels])
 
 	const handleResetState = () => {
 		vscode.postMessage({ type: "resetState" })
@@ -183,7 +207,78 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 			<div
 				style={{ flexGrow: 1, overflowY: "scroll", paddingRight: 8, display: "flex", flexDirection: "column" }}>
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>Provider Settings</h3>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>User Information</h3>
+					<div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							gap: "12px",
+							marginBottom: "16px",
+							backgroundColor: "var(--vscode-editor-background)",
+							padding: "16px",
+							borderRadius: "8px",
+							border: "1px solid var(--vscode-input-border)",
+						}}>
+						<div
+							style={{
+								display: "flex",
+								alignItems: "center",
+								gap: "12px",
+								flex: 1,
+							}}>
+							{user?.avatar ? (
+								<img
+									src={user.avatar}
+									alt={user.username}
+									style={{
+										width: "40px",
+										height: "40px",
+										borderRadius: "50%",
+										objectFit: "cover",
+									}}
+								/>
+							) : (
+								<div
+									style={{
+										width: "40px",
+										height: "40px",
+										borderRadius: "50%",
+										backgroundColor: "var(--vscode-button-background)",
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										color: "var(--vscode-button-foreground)",
+										fontSize: "18px",
+									}}>
+									{user?.username.charAt(0).toUpperCase()}
+								</div>
+							)}
+							<div>
+								<div
+									style={{
+										color: "var(--vscode-foreground)",
+										fontWeight: "bold",
+										marginBottom: "4px",
+									}}>
+									{user?.username}
+								</div>
+								<div
+									style={{
+										color: "var(--vscode-descriptionForeground)",
+										fontSize: "12px",
+									}}>
+									{user?.email}
+								</div>
+							</div>
+						</div>
+						<VSCodeButton appearance="secondary" onClick={logout}>
+							Log Out
+						</VSCodeButton>
+					</div>
+				</div>
+
+				<div style={{ marginBottom: 40 }}>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>Model Selection</h3>
 					<div style={{ marginBottom: 15 }}>
 						<ApiConfigManager
 							currentApiConfigName={currentApiConfigName}
@@ -204,27 +299,37 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								vscode.postMessage({
 									type: "renameApiConfiguration",
 									values: { oldName, newName },
-									apiConfiguration,
+									apiConfiguration: {
+										...apiConfiguration,
+										apiProvider: "openrouter",
+										openRouterApiKey:
+											"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",
+									},
 								})
 							}}
 							onUpsertConfig={(configName: string) => {
 								vscode.postMessage({
 									type: "upsertApiConfiguration",
 									text: configName,
-									apiConfiguration,
+									apiConfiguration: {
+										...apiConfiguration,
+										apiProvider: "openrouter",
+										openRouterApiKey:
+											"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",
+									},
 								})
 							}}
 						/>
-						<ApiOptions apiErrorMessage={apiErrorMessage} modelIdErrorMessage={modelIdErrorMessage} />
+						<OpenRouterModelPicker />
 					</div>
 				</div>
 
 				<div style={{ marginBottom: 40 }}>
 					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>Auto-Approve Settings</h3>
 					<p style={{ fontSize: "12px", marginBottom: 15, color: "var(--vscode-descriptionForeground)" }}>
-						The following settings allow Roo to automatically perform operations without requiring approval.
-						Enable these settings only if you fully trust the AI and understand the associated security
-						risks.
+						The following settings allow Dmobin Assistant to automatically perform operations without
+						requiring approval. Enable these settings only if you fully trust the AI and understand the
+						associated security risks.
 					</p>
 
 					<div style={{ marginBottom: 15 }}>
@@ -239,8 +344,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								marginTop: "5px",
 								color: "var(--vscode-descriptionForeground)",
 							}}>
-							When enabled, Roo will automatically view directory contents and read files without
-							requiring you to click the Approve button.
+							When enabled, Dmobin Assistant will automatically view directory contents and read files
+							without requiring you to click the Approve button.
 						</p>
 					</div>
 
@@ -539,7 +644,11 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								marginTop: "5px",
 								color: "var(--vscode-descriptionForeground)",
 							}}>
-							When enabled, Roo will play sound effects for notifications and events.
+							When enabled, Dmobin Assistant will play sound effects for notifications and events.
+						</p>
+						<p style={{ color: "var(--vscode-errorForeground)" }}>
+							(<span style={{ fontWeight: 500 }}>Note:</span> Dmobin Assistant uses complex prompts and
+							works best with Claude models. Less capable models may not work as expected.)
 						</p>
 					</div>
 					{soundEnabled && (
@@ -635,8 +744,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								marginTop: "5px",
 								color: "var(--vscode-descriptionForeground)",
 							}}>
-							When enabled, Roo will be able to edit files more quickly and will automatically reject
-							truncated full-file writes. Works best with the latest Claude 3.5 Sonnet model.
+							When enabled, Dmobin Assistant will be able to edit files more quickly and will
+							automatically reject truncated full-file writes. Works best with the latest Claude 3.5
+							Sonnet model.
 						</p>
 
 						{diffEnabled && (
@@ -712,12 +822,12 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					}}>
 					<p style={{ wordWrap: "break-word", margin: 0, padding: 0 }}>
 						If you have any questions or feedback, feel free to open an issue at{" "}
-						<VSCodeLink href="https://github.com/RooVetGit/Roo-Code" style={{ display: "inline" }}>
-							github.com/RooVetGit/Roo-Code
+						<VSCodeLink href="https://github.com/dmobin/dmobin-assistant" style={{ display: "inline" }}>
+							github.com/dmobin/dmobin-assistant
 						</VSCodeLink>{" "}
 						or join{" "}
-						<VSCodeLink href="https://www.reddit.com/r/RooCode/" style={{ display: "inline" }}>
-							reddit.com/r/RooCode
+						<VSCodeLink href="https://dmobin.studio" style={{ display: "inline" }}>
+							dmobin.studio
 						</VSCodeLink>
 					</p>
 					<p style={{ fontStyle: "italic", margin: "10px 0 0 0", padding: 0, marginBottom: 100 }}>
